@@ -1,0 +1,60 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Connect to orb</ion-title>
+
+    <ion-buttons end>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="connectedTo_ | async as device">
+    <ion-card-header>
+      {{device.name}} ({{device.id}})
+    </ion-card-header>
+
+    <ion-grid><ion-row>
+    <ion-col col-auto>
+      <div id='rotatingfacexy'
+       style="margin:10px;width:40px;height:40px;background:rgba(255,0,0,0.3);">xy</div>
+      <div id='rotatingfaceyz'
+       style="margin:10px;margin-top:-50px;width:40px;height:40px;background:rgba(0,255,0,0.3);">yz</div>
+      <div id='rotatingfacezx'
+       style="margin:10px;margin-top:-50px;width:40px;height:40px;background:rgba(0,0,255,0.3);">zx</div>
+    </ion-col>
+    <ion-col col-auto>
+      <div id='compass'
+          style="position:relative;text-align:center;margin:10px;height:40px;width:40px;border-radius:50%;background-color:#999;background:linear-gradient(to right,blue,red);color:white;">
+          <div style="position:absolute;right:4px;bottom:2px;font-size:35px;">&#x27b3;</div>
+          <div style="position:absolute;right:18px;bottom:25px;font-size:15px;transform:rotate(90deg)">L</div>
+          <div style="position:absolute;right:18px;bottom:0px;font-size:15px;transform:rotate(90deg)">R</div>
+      </div>
+    </ion-col>
+    <ion-col col-auto>
+      <canvas id="accelcanvas" style="margin:10px;width:40px;height:40px;"></canvas>
+    </ion-col>
+    <ion-col>
+      <p>ℍ {{q0 | number : '1.2-2'}} {{q1 | number : '1.2-2'}} {{q2 | number : '1.2-2'}} {{q3 | number : '1.2-2'}}</p>
+      <p>a {{kax | number : '1.2-2'}} {{kay | number : '1.2-2'}} {{kaz | number : '1.2-2'}}</p>
+    </ion-col>
+    </ion-row></ion-grid>
+
+    <button ion-button full>Toggle Vibration</button>
+  </ion-card>
+
+  <button ion-button full (click)="scan()">
+    <ion-spinner [hidden]="!isScanning"></ion-spinner>
+    <span [hidden]="!isScanning">Scanning</span> 
+    <span [hidden]="isScanning">Scan</span> 
+  </button>
+  <ion-list>
+    <button ion-item *ngFor="let device of bleResults" (click)="connect(device)">
+      <strong>{{device.name}}</strong> ({{device.id}}) @ {{device.rssi}}
+    </button>
+  </ion-list>
+
+  <p>{{errorMessage}}</p>
+
+</ion-content>
