@@ -11,6 +11,7 @@
 
 <ion-content>
   <ion-card *ngIf="connectedTo_ | async as device">
+
     <ion-card-header>
       {{device.name}} ({{device.id}})
     </ion-card-header>
@@ -41,7 +42,31 @@
     </ion-col>
     </ion-row></ion-grid>
 
+    <ion-list>
+     <ion-item>
+       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="red" (ionChange)="this.writeColor()">
+         <ion-label range-left>R</ion-label>
+       </ion-range>
+     </ion-item>
+     <ion-item>
+       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="green" (ionChange)="this.writeColor()">
+         <ion-label range-left>G</ion-label>
+       </ion-range>
+     </ion-item>
+     <ion-item>
+       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="blue" (ionChange)="this.writeColor()">
+         <ion-label range-left>B</ion-label>
+       </ion-range>
+     </ion-item>
+     <ion-item>
+       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="white" (ionChange)="this.writeWhiteColor()">
+         <ion-label range-left>W</ion-label>
+       </ion-range>
+     </ion-item>
+    </ion-list>
+
     <button ion-button full>Toggle Vibration</button>
+
   </ion-card>
 
   <button ion-button full (click)="scan()">

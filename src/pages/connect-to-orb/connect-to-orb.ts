@@ -14,12 +14,14 @@ export class ConnectToOrbPage {
   isScanning: boolean = false;
   bleResults: any[] = [];
   connectedTo_ = new Subject<any>();
-  connectedTo: any[] = [];
+  connectedTo: any = {};
     
-  quat_char     = {"service":"1cb91623-af0c-0484-5145-df91751f720a",
+  quat_char     = {"service":       "1cb91623-af0c-0484-5145-df91751f720a",
                    "characteristic":"1cb91624-af0c-0484-5145-df91751f720a"};
-  kinaccel_char = {"service":"1cb91623-af0c-0484-5145-df91751f720a",
+  kinaccel_char = {"service":       "1cb91623-af0c-0484-5145-df91751f720a",
                    "characteristic":"1cb91625-af0c-0484-5145-df91751f720a"};
+  leds_char     = {"service":       "0ff11223-e838-63ac-564d-7d2db2d92a27",
+                   "characteristic":"0ff11224-e838-63ac-564d-7d2db2d92a27"};
 
   q0 = 1;
   q1 = 0;
@@ -32,6 +34,11 @@ export class ConnectToOrbPage {
   kax = 0;
   kay = 0;
   kaz = 0;
+
+  red = 0;
+  green = 0;
+  blue = 0;
+  white = 0;
 
   constructor(
               public navCtrl: NavController,
@@ -140,5 +147,25 @@ export class ConnectToOrbPage {
       ctx.lineTo(7,100-this.kaz*90);
       ctx.stroke()
     }
+  }
+
+  writeColor() {
+    var data = new Uint8Array([this.red,this.green,this.blue]).buffer;
+    console.log(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data);
+    this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
+      () => console.log("writing "),
+      err => console.error(err)
+    );
+    console.log(this.red, this.green, this.blue);
+  }
+
+  writeWhiteColor() {
+    var data = new Uint8Array([this.white,this.white,this.white]).buffer;
+    console.log(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data);
+    this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
+      () => console.log("writing "),
+      err => console.error(err)
+    );
+    console.log(this.red, this.green, this.blue);
   }
 }
