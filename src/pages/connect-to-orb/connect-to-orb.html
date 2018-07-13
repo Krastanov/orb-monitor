@@ -65,7 +65,18 @@
      </ion-item>
     </ion-list>
 
-    <button ion-button full>Toggle Vibration</button>
+    <ion-grid>
+     <ion-row>
+      <ion-col width-50><button ion-button block (click)="this.setVibration(1)">Start Vibration</button></ion-col>
+      <ion-col width-50><button ion-button block (click)="this.setVibration(0)">Stop Vibration</button></ion-col>
+    </ion-row>
+     <ion-row>
+      <ion-col width-25><button ion-button block (click)="this.setVibration(2)">Mode 1</button></ion-col>
+      <ion-col width-25><button ion-button block (click)="this.setVibration(3)">Mode 2</button></ion-col>
+      <ion-col width-25><button ion-button block (click)="this.setVibration(4)">Mode 3</button></ion-col>
+      <ion-col width-25><button ion-button block (click)="this.setVibration(5)">Mode 4</button></ion-col>
+    </ion-row>
+    </ion-grid>
 
   </ion-card>
 

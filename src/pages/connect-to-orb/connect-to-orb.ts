@@ -22,6 +22,8 @@ export class ConnectToOrbPage {
                    "characteristic":"1cb91625-af0c-0484-5145-df91751f720a"};
   leds_char     = {"service":       "0ff11223-e838-63ac-564d-7d2db2d92a27",
                    "characteristic":"0ff11224-e838-63ac-564d-7d2db2d92a27"};
+  vibro_char    = {"service":       "64321523-e59c-db8b-134a-6efa37b2d943",
+                   "characteristic":"64321524-e59c-db8b-134a-6efa37b2d943"};
 
   q0 = 1;
   q1 = 0;
@@ -151,7 +153,6 @@ export class ConnectToOrbPage {
 
   writeColor() {
     var data = new Uint8Array([this.red,this.green,this.blue]).buffer;
-    console.log(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data);
     this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
       () => console.log("writing "),
       err => console.error(err)
@@ -161,11 +162,18 @@ export class ConnectToOrbPage {
 
   writeWhiteColor() {
     var data = new Uint8Array([this.white,this.white,this.white]).buffer;
-    console.log(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data);
     this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
       () => console.log("writing "),
       err => console.error(err)
     );
     console.log(this.red, this.green, this.blue);
+  }
+
+  setVibration(mode) {
+    var data = new Uint8Array([mode]).buffer;
+    this.ble.write(this.connectedTo.id, this.vibro_char.service, this.vibro_char.characteristic, data).then(
+      () => console.log("writing "),
+      err => console.error(err)
+    );
   }
 }
