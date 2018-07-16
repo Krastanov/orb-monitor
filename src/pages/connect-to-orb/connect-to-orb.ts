@@ -24,6 +24,8 @@ export class ConnectToOrbPage {
                    "characteristic":"0ff11224-e838-63ac-564d-7d2db2d92a27"};
   vibro_char    = {"service":       "64321523-e59c-db8b-134a-6efa37b2d943",
                    "characteristic":"64321524-e59c-db8b-134a-6efa37b2d943"};
+  batt_char     = {"service":       "180f",
+                   "characteristic":"2a19"};
 
   q0 = 1;
   q1 = 0;
@@ -42,6 +44,10 @@ export class ConnectToOrbPage {
   blue = 0;
   white = 0;
 
+  rssi = 0;
+
+  batt = 0;
+
   constructor(
               public navCtrl: NavController,
               private ble: BLE,
@@ -53,46 +59,88 @@ export class ConnectToOrbPage {
     this.scan();
   }
 
+  log(s, json={}) {
+    this.errorMessage += '\nLOG:'+s+' '+JSON.stringify(json);
+  }
+
+  error(s, json={}) {
+    this.errorMessage += '\nERR:'+s+' '+JSON.stringify(json);
+  }
+
   scan() {
     console.log('Starting BLE scan');
     this.isScanning = true;
     this.bleResults = [];
     this.ble.scan([],5).subscribe(
-      device => {console.log(JSON.stringify(device));
-                 this.bleResults.push(device);},
-      error => {console.error(JSON.stringify(error));
-                this.errorMessage += JSON.stringify(error);},
-      () => {console.log('BLE scan finished'); // TODO this does not seem to ever be called
+      device => this.bleResults.push(device),
+      error => this.error('scan',error),
+      () => {this.log('scan finished'); // TODO this does not seem to ever be called
              this.isScanning = false;}
     );
-    setInterval(() => {this.isScanning = false;}, 5000);
+    setTimeout(() => {this.isScanning = false;}, 5000);
   }
 
   connect(device) {
     this.ble.connect(device.id).subscribe(
       device => {this.connectedTo_.next(device);
                  this.connectedTo = device;
-                 this.connectNotifications(device.id);
-                 console.log(JSON.stringify(device));
-                 this.errorMessage += JSON.stringify(device);},
-      error => {console.error(JSON.stringify(error)); // TODO handle this
-                this.errorMessage += JSON.stringify(error);},
-      () => console.log('Connection observable shut down') // TODO handle this
+                 this.rssiLog(device);
+                 this.readBatt();
+                 this.startBattObservation();
+                 this.cd.markForCheck();
+                 this.cd.detectChanges(); // TODO this should really not be necessary...
+                 this.log('connected');},
+      error => this.error('connection',error),
+      () => this.log('connection finished') // TODO this does not seem to ever be called
+    );
+  }
+
+  rssiLog(device) {
+    this.ble.readRSSI(device.id).then(
+      (rssi) => {this.rssi = rssi;
+                 this.cd.markForCheck();
+                 this.cd.detectChanges(); // TODO this should really not be necessary...
+                 setTimeout(()=>this.rssiLog(device),1000);
+                },
+      err => console.error(err)
     );
   }
  
-  connectNotifications(device) {
+  startBattObservation() {
+    var device = this.connectedTo.id;
+    this.ble.startNotification(device, this.batt_char.service, this.batt_char.characteristic).subscribe(
+      data => this.parseBatt(data),
+      error => this.error('batt notification',error),
+      () => this.log('notification observable finished') // TODO this does not seem to ever be called
+    );
+  }
+
+  readBatt() {
+    var device = this.connectedTo.id;
+    this.ble.read(device, this.batt_char.service, this.batt_char.characteristic).then(
+      data => this.parseBatt(data),
+      error => this.error('first batt read',error),
+    );
+  }
+
+  parseBatt(buffer:ArrayBuffer) {
+    var data = new Uint8Array(buffer);
+    this.batt=data[0];
+    this.cd.markForCheck();
+    this.cd.detectChanges(); // TODO this should really not be necessary...
+  }
+
+  startOrientationObservation() {
+    var device = this.connectedTo.id;
     this.ble.startNotification(device, this.quat_char.service, this.quat_char.characteristic).subscribe(
       data => this.parseQuatChar(data),
-      error => {console.error(JSON.stringify(error)); // TODO handle this
-                this.errorMessage += JSON.stringify(error);},
-      () => console.log('Quaternion characteristic observable shut down') // TODO handle this
+      error => this.error('quat notification',error),
+      () => this.log('notification observable finished') // TODO this does not seem to ever be called
     );
     this.ble.startNotification(device, this.kinaccel_char.service, this.kinaccel_char.characteristic).subscribe(
       data => this.parseKinAccelChar(data),
-      error => {console.error(JSON.stringify(error)); // TODO handle this
-                this.errorMessage += JSON.stringify(error);},
-      () => console.log('Kinematic acceleration characteristic observable shut down') // TODO handle this
+      error => this.error('kin accel notification',error),
+      () => this.log('notification observable finished') // TODO this does not seem to ever be called
     );
   }
 
@@ -154,26 +202,24 @@ export class ConnectToOrbPage {
   writeColor() {
     var data = new Uint8Array([this.red,this.green,this.blue]).buffer;
     this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
-      () => console.log("writing "),
-      err => console.error(err)
+      () => {},
+      err => this.error('color',err)
     );
-    console.log(this.red, this.green, this.blue);
   }
 
   writeWhiteColor() {
     var data = new Uint8Array([this.white,this.white,this.white]).buffer;
     this.ble.write(this.connectedTo.id, this.leds_char.service, this.leds_char.characteristic, data).then(
-      () => console.log("writing "),
-      err => console.error(err)
+      () => {},
+      err => this.error('white color',err)
     );
-    console.log(this.red, this.green, this.blue);
   }
 
   setVibration(mode) {
     var data = new Uint8Array([mode]).buffer;
     this.ble.write(this.connectedTo.id, this.vibro_char.service, this.vibro_char.characteristic, data).then(
-      () => console.log("writing "),
-      err => console.error(err)
+      () => {},
+      err => this.error('vibration',err)
     );
   }
 }

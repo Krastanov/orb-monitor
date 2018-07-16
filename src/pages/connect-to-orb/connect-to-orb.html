@@ -13,10 +13,15 @@
   <ion-card *ngIf="connectedTo_ | async as device">
 
     <ion-card-header>
-      {{device.name}} ({{device.id}})
+      <span style='float:left;'>{{device.name}} ({{device.id}})</span><span style='float:right;'>bat: {{batt}}% | conn: {{rssi}}dB</span>
     </ion-card-header>
 
     <ion-grid><ion-row>
+    <ion-col col-auto>
+      <button ion-button small (click)="this.startOrientationObservation()">Observe Orientation</button>
+      <p>ℍ {{q0 | number : '1.2-2'}} {{q1 | number : '1.2-2'}} {{q2 | number : '1.2-2'}} {{q3 | number : '1.2-2'}}</p>
+      <p>a {{kax | number : '1.2-2'}} {{kay | number : '1.2-2'}} {{kaz | number : '1.2-2'}}</p>
+    </ion-col>
     <ion-col col-auto>
       <div id='rotatingfacexy'
        style="margin:10px;width:40px;height:40px;background:rgba(255,0,0,0.3);">xy</div>
@@ -35,10 +40,6 @@
     </ion-col>
     <ion-col col-auto>
       <canvas id="accelcanvas" style="margin:10px;width:40px;height:40px;"></canvas>
-    </ion-col>
-    <ion-col>
-      <p>ℍ {{q0 | number : '1.2-2'}} {{q1 | number : '1.2-2'}} {{q2 | number : '1.2-2'}} {{q3 | number : '1.2-2'}}</p>
-      <p>a {{kax | number : '1.2-2'}} {{kay | number : '1.2-2'}} {{kaz | number : '1.2-2'}}</p>
     </ion-col>
     </ion-row></ion-grid>
 
@@ -91,6 +92,6 @@
     </button>
   </ion-list>
 
-  <p>{{errorMessage}}</p>
+  <pre>{{errorMessage}}</pre>
 
 </ion-content>
