@@ -10,84 +10,13 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="connectedTo_ | async as device">
-
-    <ion-card-header>
-      <span style='float:left;'>{{device.name}} ({{device.id}})</span><span style='float:right;'>bat: {{batt}}% | conn: {{rssi}}dB</span>
-    </ion-card-header>
-
-    <ion-grid><ion-row>
-    <ion-col col-auto>
-      <button ion-button small (click)="this.startOrientationObservation()">Observe Orientation</button>
-      <p>ℍ {{q0 | number : '1.2-2'}} {{q1 | number : '1.2-2'}} {{q2 | number : '1.2-2'}} {{q3 | number : '1.2-2'}}</p>
-      <p>a {{kax | number : '1.2-2'}} {{kay | number : '1.2-2'}} {{kaz | number : '1.2-2'}}</p>
-    </ion-col>
-    <ion-col col-auto>
-      <div id='rotatingfacexy'
-       style="margin:10px;width:40px;height:40px;background:rgba(255,0,0,0.3);">xy</div>
-      <div id='rotatingfaceyz'
-       style="margin:10px;margin-top:-50px;width:40px;height:40px;background:rgba(0,255,0,0.3);">yz</div>
-      <div id='rotatingfacezx'
-       style="margin:10px;margin-top:-50px;width:40px;height:40px;background:rgba(0,0,255,0.3);">zx</div>
-    </ion-col>
-    <ion-col col-auto>
-      <div id='compass'
-          style="position:relative;text-align:center;margin:10px;height:40px;width:40px;border-radius:50%;background-color:#999;background:linear-gradient(to right,blue,red);color:white;">
-          <div style="position:absolute;right:4px;bottom:2px;font-size:35px;">&#x27b3;</div>
-          <div style="position:absolute;right:18px;bottom:25px;font-size:15px;transform:rotate(90deg)">L</div>
-          <div style="position:absolute;right:18px;bottom:0px;font-size:15px;transform:rotate(90deg)">R</div>
-      </div>
-    </ion-col>
-    <ion-col col-auto>
-      <canvas id="accelcanvas" style="margin:10px;width:40px;height:40px;"></canvas>
-    </ion-col>
-    </ion-row></ion-grid>
-
-    <ion-list>
-     <ion-item>
-       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="red" (ionChange)="this.writeColor()">
-         <ion-label range-left>R</ion-label>
-       </ion-range>
-     </ion-item>
-     <ion-item>
-       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="green" (ionChange)="this.writeColor()">
-         <ion-label range-left>G</ion-label>
-       </ion-range>
-     </ion-item>
-     <ion-item>
-       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="blue" (ionChange)="this.writeColor()">
-         <ion-label range-left>B</ion-label>
-       </ion-range>
-     </ion-item>
-     <ion-item>
-       <ion-range min="0" max="255" step="1" debounce="100" [(ngModel)]="white" (ionChange)="this.writeWhiteColor()">
-         <ion-label range-left>W</ion-label>
-       </ion-range>
-     </ion-item>
-    </ion-list>
-
-    <ion-grid>
-     <ion-row>
-      <ion-col width-50><button ion-button block (click)="this.setVibration(1)">Start Vibration</button></ion-col>
-      <ion-col width-50><button ion-button block (click)="this.setVibration(0)">Stop Vibration</button></ion-col>
-    </ion-row>
-     <ion-row>
-      <ion-col width-25><button ion-button block (click)="this.setVibration(2)">Mode 1</button></ion-col>
-      <ion-col width-25><button ion-button block (click)="this.setVibration(3)">Mode 2</button></ion-col>
-      <ion-col width-25><button ion-button block (click)="this.setVibration(4)">Mode 3</button></ion-col>
-      <ion-col width-25><button ion-button block (click)="this.setVibration(5)">Mode 4</button></ion-col>
-    </ion-row>
-    </ion-grid>
-
-  </ion-card>
-
   <button ion-button full (click)="scan()">
     <ion-spinner [hidden]="!isScanning"></ion-spinner>
     <span [hidden]="!isScanning">Scanning</span> 
     <span [hidden]="isScanning">Scan</span> 
   </button>
   <ion-list>
-    <button ion-item *ngFor="let device of bleResults" (click)="connect(device)">
+    <button ion-item *ngFor="let device of bleResults">
       <strong>{{device.name}}</strong> ({{device.id}}) @ {{device.rssi}}
     </button>
   </ion-list>
