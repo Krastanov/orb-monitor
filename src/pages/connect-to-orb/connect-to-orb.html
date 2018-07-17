@@ -81,6 +81,9 @@
 
   </ion-card>
 
+  <button ion-button full (click)="connectToLast()">
+    Connect to last
+  </button>
   <button ion-button full (click)="scan()">
     <ion-spinner [hidden]="!isScanning"></ion-spinner>
     <span [hidden]="!isScanning">Scanning</span> 

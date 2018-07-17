@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 
 import { BLE } from '@ionic-native/ble';
 
+import { Storage } from '@ionic/storage'
+
 @Component({
   selector: 'page-connect-to-orb',
   templateUrl: 'connect-to-orb.html'
@@ -51,6 +53,7 @@ export class ConnectToOrbPage {
   constructor(
               public navCtrl: NavController,
               private ble: BLE,
+              private storage: Storage,
               private cd: ChangeDetectorRef // TODO study performance consequences from this, and whether there are smart ways to make it unnecessary.
              ) {
   }
@@ -80,10 +83,19 @@ export class ConnectToOrbPage {
     setTimeout(() => {this.isScanning = false;}, 5000);
   }
 
+  connectToLast() {
+    this.storage.get('lastConnectedTo').then(
+      d=>{this.log('connect to last', JSON.stringify(d));
+          this.connect(d);},
+      e=>this.error('connect to last', e)
+    );
+  }
+
   connect(device) {
     this.ble.connect(device.id).subscribe(
       device => {this.connectedTo_.next(device);
                  this.connectedTo = device;
+                 this.storage.set('lastConnectedTo', device);
                  this.rssiLog(device);
                  this.readBatt();
                  this.startBattObservation();
