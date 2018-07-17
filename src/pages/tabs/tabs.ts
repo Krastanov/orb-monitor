@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 
 import { AboutPage } from '../about/about';
-import { ContactPage } from '../contact/contact';
-import { HomePage } from '../home/home';
+import { RangingPage } from '../ranging/ranging';
 import { ConnectToOrbPage } from '../connect-to-orb/connect-to-orb';
 
 @Component({
@@ -11,8 +10,8 @@ import { ConnectToOrbPage } from '../connect-to-orb/connect-to-orb';
 export class TabsPage {
 
   tab1Root = ConnectToOrbPage;
-  tab2Root = AboutPage;
-  tab3Root = ContactPage;
+  tab2Root = RangingPage;
+  tab3Root = AboutPage;
 
   constructor() {
 

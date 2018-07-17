@@ -4,8 +4,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { AboutPage } from '../pages/about/about';
-import { ContactPage } from '../pages/contact/contact';
-import { HomePage } from '../pages/home/home';
+import { RangingPage } from '../pages/ranging/ranging';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ConnectToOrbPage } from '../pages/connect-to-orb/connect-to-orb';
 
@@ -18,8 +17,7 @@ import { BLE } from '@ionic-native/ble';
   declarations: [
     MyApp,
     AboutPage,
-    ContactPage,
-    HomePage,
+    RangingPage,
     TabsPage,
     ConnectToOrbPage
   ],
@@ -31,8 +29,7 @@ import { BLE } from '@ionic-native/ble';
   entryComponents: [
     MyApp,
     AboutPage,
-    ContactPage,
-    HomePage,
+    RangingPage,
     TabsPage,
     ConnectToOrbPage
   ],
